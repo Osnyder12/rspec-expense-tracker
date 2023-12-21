@@ -18,10 +18,10 @@ RSpec.configure do |config|
   # if you want to see the backtrace pass the --backtrace or -b flag to RSpec
   config.filter_gems_from_backtrace 'rack', 'rack-test', 'sequel', 'sinatra'
 
-  rspec.alias_example_group_to :pdescribe, pry: true
-  rspec.alias_example_to :pit, pry: true
+  config.alias_example_group_to :pdescribe, pry: true
+  config.alias_example_to :pit, pry: true
 
-  rspec.after(:example, pry: true) do |ex|
+  config.after(:example, pry: true) do |ex|
     require 'pry'
     binding.pry
   end
