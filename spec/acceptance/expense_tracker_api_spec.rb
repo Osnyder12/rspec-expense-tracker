@@ -10,6 +10,10 @@ module ExpenseTracker
       ExpenseTracker::API.new
     end
 
+    before do
+      header 'CONTENT-Type', 'application/json'
+    end
+
     def post_expense(expense)
       post '/expenses', JSON.generate(expense)
 

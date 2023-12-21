@@ -11,14 +11,18 @@ module ExpenseTracker
 
     let(:ledger) { instance_double('ExpenseTracker::Ledger') }
 
+    xml = "<?xml version='1.0'?> <rss version='2.0' xmlns:g='http://base.google.com/ns/1.0'><ledger><some>data</some></ledger></rss>"
+
     def parsed(last_response)
       JSON.parse(last_response.body)
     end
 
-    describe 'POST /expenses' do
+    describe 'POST /expenses in JSON format' do
       let(:expense) { { 'some' => 'data' } }
 
       before do
+        header 'CONTENT-Type', 'application/json'
+
         allow(ledger).to receive(:record)
           .with(expense)
           .and_return(RecordResult.new(true, 417, nil))
@@ -55,6 +59,26 @@ module ExpenseTracker
         it 'responds with a 422 (Unprocessable entity)' do
           post '/expenses', JSON.generate(expense)
           expect(last_response.status).to eq(422)
+        end
+      end
+    end
+
+    describe 'POST /expenses in XML format' do
+      let(:expense) { { "payee"=>"", "amount"=>"", "date"=>"" } }
+
+      before do
+        header 'CONTENT-Type', 'text/xml'
+
+        allow(ledger).to receive(:record)
+          .with(expense)
+          .and_return(RecordResult.new(true, 417, nil))
+      end
+
+      context 'when expense is successfully recorded' do
+        it 'returns the expense id' do
+          post '/expenses', xml
+
+          expect(parsed(last_response)).to include('expense_id' => 417)
         end
       end
     end
