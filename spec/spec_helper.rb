@@ -14,6 +14,17 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+
+  # adds fast metadata tag to every file in spec/unit folder
+  # filtering by metadata tag file_path in order to set fast tag
+  config.define_derived_metadata(file_path: /spec\/unit/) do |meta|
+    meta[:fast] = true
+  end
+
+  config.define_derived_metadata do |meta|
+    meta[:aggregate_failures] = true unless meta.key?(:aggregate_failures)
+  end
+
   # enabling this limits the backtrace feedback and makes finding errors easier
   # if you want to see the backtrace pass the --backtrace or -b flag to RSpec
   config.filter_gems_from_backtrace 'rack', 'rack-test', 'sequel', 'sinatra'
